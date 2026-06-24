@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { ClockWidget } from "@/components/widgets/clock-widget";
+import { WeatherWidget } from "@/components/widgets/weather-widget";
 
 export default function Dashboard() {
   return (
@@ -8,9 +9,9 @@ export default function Dashboard() {
         {/* News (big) */}
         <Card className="md:col-span-2 md:row-span-2 p-6">News Widget (Static)</Card>
         {/* Clock (small) */}
-        <ClockWidget />
+        <Card className="md:col-span-1 md:row-span-1 p-6"><ClockWidget /></Card>
         {/* Weather (medium) */}
-        <Card className="md:col-span-1 md:row-span-2 p-6">Weather Widget</Card>
+        <Card className="md:col-span-1 md:row-span-2 p-6"><WeatherWidget /></Card>
         {/* Calender / Events (long) */}
         <Card className="md:col-span-2 md:row-span-1 p-6">Calendar / Events Widget</Card>
         {/* Quick Links */}
