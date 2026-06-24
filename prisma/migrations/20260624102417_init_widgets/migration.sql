@@ -1,0 +1,12 @@
+-- CreateTable
+CREATE TABLE "Widget" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "type" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "colspan" INTEGER NOT NULL DEFAULT 1,
+    "rowspan" INTEGER NOT NULL DEFAULT 1,
+    "xPosition" INTEGER NOT NULL DEFAULT 0,
+    "yPosition" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
