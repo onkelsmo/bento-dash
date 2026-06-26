@@ -1,18 +1,53 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CloudSun, Droplets, Wind, CloudRain, Sun } from "lucide-react";
+import { CloudSun, Droplets, Wind, CloudRain, Sun, Cloud, CloudLightning, Snowflake } from "lucide-react";
+
+const LAT = 53.1167;
+const LON = 9.7833;
+
+const getWeatherDetails = (code: number) => {
+    if (code === 0) return { label: "Klar", icon: Sun, color: "text-amber-400" };
+    if (code >= 1 && code <= 3) return { label: "Bewölkt", icon: CloudSun, color: "text-slate-300" };
+    if (code >= 45 && code <= 48) return { label: "Nebel", icon: Cloud, color: "text-slate-400" };
+    if (code >= 51 && code <= 67) return { label: "Regen", icon: CloudRain, color: "text-blue-400" };
+    if (code >= 71 && code <= 77) return { label: "Schnee", icon: Snowflake, color: "text-white" };
+    if (code >= 95) return { label: "Gewitter", icon: CloudLightning, color: "text-purple-400" };
+    return { label: "Unbekannt", icon: Sun, color: "text-amber-400" };
+}
+
+async function fetchWeather() {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max&timezone=Europe%2FBerlin`;
+    const res = await fetch(url, {
+        next: { revalidate: 1800 }
+    })
+
+    if (!res.ok) {
+        throw new Error("Failed to fetch weather data");
+    }
+    return res.json();
+}
 
 export async function WeatherWidget() {
+    const data = await fetchWeather();
+    const currentCode = data.current.weather_code;
+    const { label: condition, icon: CurrentIcon, color: iconColor } = getWeatherDetails(currentCode)
+
     const weatherData = {
-        temp: 19,
-        condition: "Partly Cloudy",
+        temp: Math.round(data.current.temperature_2m),
+        condition: condition,
         location: "Schneverdingen",
-        humidity: 65,
-        wind: 14,
-        forecast: [
-            { day: "Morgen", temp: 21, icon: Sun },
-            { day: "Donnerstag", temp: 18, icon: CloudRain },
-            { day: "Freitag", temp: 22, icon: CloudSun },
-        ]
+        humidity: data.current.relative_humidity_2m,
+        wind: data.current.wind_speed_10m,
+
+        forecast: data.daily.time.slice(1, 4).map((timeStr: string, index: number) => {
+            const date = new Date(timeStr);
+            const dayName = date.toLocaleDateString("de-DE", { weekday: "short" });
+            const { icon } = getWeatherDetails(data.daily.weather_code[index + 1]);
+            return {
+                day: dayName,
+                temp: Math.round(data.daily.temperature_2m_max[index + 1]),
+                icon: icon
+            }
+        })
     }
 
     return (
@@ -35,7 +70,7 @@ export async function WeatherWidget() {
                         <p className="text-sm text-slate-400 mt-1 font-medium">
                             {weatherData.condition}
                         </p>
-                        <CloudSun className="w-14 h-14 text-amber-400 drop-shadow-[0_4px_12px_rgba(251,191,36,0.3)]" />
+                        <CurrentIcon className={`w-14 h-14 ${iconColor} drop-shadow-md`} />
                     </div>
                 </div>
 
