@@ -1,11 +1,17 @@
 import { Card } from "@/components/ui/card";
 import { ClockWidget } from "@/components/widgets/clock-widget";
 import { WeatherWidget } from "@/components/widgets/weather-widget";
+import { NewsWidget } from "@/components/widgets/news-widget";
+import { CalendarWidget } from "@/components/widgets/calendar-widget";
+import { LinksWidget } from "@/components/widgets/links-widget";
 import { db } from "@/lib/db";
 
 const widgetComponents: Record<string, React.ComponentType> = {
   clock: ClockWidget,
   weather: WeatherWidget,
+  news: NewsWidget,
+  calendar: CalendarWidget,
+  links: LinksWidget,
 }
 
 export default async function Dashboard() {
